@@ -1,4 +1,5 @@
 import { Page } from '@playwright/test'
+import path from 'path';
 export default class BasePage {
 
     protected page: Page;
@@ -97,13 +98,79 @@ export default class BasePage {
         await this.page.isEnabled(locator);
     }
 
-    protected async redirectURL(url: string){
+    protected async redirectURL(url: string) {
         await this.page.goto(url);
     }
 
-    protected async selectToDropdown(locator:string, option:string){
+    protected async selectToDropdown(locator: string, option: string) {
         //await this.page.locator(locator).selectOption(option);
-        await this.page.locator(locator).selectOption({label: option});
+        await this.page.locator(locator).selectOption({ label: option });
+    }
+
+    protected async getInputValueOfElement(locator: string) {
+        return this.page.locator(locator).inputValue();
+    }
+
+    protected async getAttributeValueOfElement(locator: string, attributeValue: string) {
+        return this.page.locator(locator).getAttribute(attributeValue);
+    }
+
+    protected async refeshPage() {
+        await this.page.reload();
+    }
+
+    protected async getNumberOfElement(locator: string) {
+        const element = await this.page.$$(locator);
+        //const element = await this.page.locator(locator).all();
+        return element.length;
+    }
+
+    protected async blurToElement(locator: string) {
+        await this.page.locator(locator).blur();
+    }
+
+    protected async uploadFile(locator: string, fileName: string) {
+        const pathToFile = path.resolve(__dirname, fileName);
+        await this.page.locator(locator).setInputFiles(pathToFile);
+    }
+
+    protected async uploadMultipleFile(locator: string, ...fileNames: string[]) {
+        let filePaths: string[] = fileNames.map(fileName => path.resolve(__dirname, fileName));
+        await this.page.locator(locator).setInputFiles(filePaths);
+    }
+
+    protected async scrollToPageTop(){
+        await this.page.evaluate(() => window.scrollTo({
+            top : 0,
+            left : 0,
+            behavior: 'smooth'
+        }))
+    }
+
+    protected async hideElement(locator: string){
+        await this.page.locator(locator).evaluate(el => el.style.display = 'none !important')
+    }
+
+    protected async redirectBack(){
+        await this.page.goBack();
+    }
+
+    protected async redirectForward(){
+        await this.page.goForward();
+    }
+
+    protected async getPageSource(){
+        return this.page.content();
+    }
+
+    protected async clickToElementInIframe(locator:string, frameLocator: string){
+        const iframeLocator = this.page.locator(frameLocator);
+        await iframeLocator.locator(locator).click();
+    }
+
+    protected async fillToELementFrame(locator:string, frameLocator:string, inputValue: string){
+        const ifameLocator = this.page.locator(frameLocator);
+        await ifameLocator.locator(locator).fill(inputValue);
     }
 
 }
