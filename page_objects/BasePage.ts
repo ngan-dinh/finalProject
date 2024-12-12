@@ -139,78 +139,104 @@ export default class BasePage {
         await this.page.locator(locator).setInputFiles(filePaths);
     }
 
-    protected async scrollToPageTop(){
+    protected async scrollToPageTop() {
         await this.page.evaluate(() => window.scrollTo({
-            top : 0,
-            left : 0,
+            top: 0,
+            left: 0,
             behavior: 'smooth'
         }))
     }
 
-    protected async hideElement(locator: string){
+    protected async hideElement(locator: string) {
         await this.page.locator(locator).evaluate(el => el.style.display = 'none !important')
     }
 
-    protected async redirectBack(){
+    protected async redirectBack() {
         await this.page.goBack();
     }
 
-    protected async redirectForward(){
+    protected async redirectForward() {
         await this.page.goForward();
     }
 
-    protected async getPageSource(){
+    protected async getPageSource() {
         return this.page.content();
     }
 
-    protected async clickToElementInIframe(locator:string, frameLocator: string){
+    protected async clickToElementInIframe(locator: string, frameLocator: string) {
         const iframeLocator = this.page.locator(frameLocator);
         await iframeLocator.locator(locator).click();
     }
 
-    protected async fillToELementIFrame(locator:string, frameLocator:string, inputValue: string){
+    protected async fillToELementIFrame(locator: string, frameLocator: string, inputValue: string) {
         const ifameLocator = this.page.locator(frameLocator);
         await ifameLocator.locator(locator).fill(inputValue);
     }
 
-    protected async waitForElementVisible(locator: string, timeout?: number){
+    protected async waitForElementVisible(locator: string, timeout?: number) {
         await this.page.locator(locator).waitFor({
             state: 'visible',
             timeout: timeout
         })
     }
 
-    protected async waitForELementHidden(locator: string, timeout?: number){
+    protected async waitForELementHidden(locator: string, timeout?: number) {
         await this.page.locator(locator).waitFor({
             state: 'hidden',
             timeout: timeout
         })
     }
 
-    protected async waitForELementPresent(locator: string, timeout?: number){
+    protected async waitForELementPresent(locator: string, timeout?: number) {
         await this.page.locator(locator).waitFor({
             state: 'attached',
             timeout: timeout
         })
     }
 
-    protected async waitForELementStale(locator: string, timeout?: number){
+    protected async waitForELementStale(locator: string, timeout?: number) {
         await this.page.locator(locator).waitFor({
             state: 'detached',
             timeout: timeout
         })
     }
 
-    protected async getTextOfAllElements(locator:string): Promise<string[]>{
+    protected async getTextOfAllElements(locator: string): Promise<string[]> {
         const elements = await this.page.locator(locator).all();
-        const textOfElemts : string[] = [];
+        const textOfElemts: string[] = [];
 
-        for(let i =0; i < elements.length; i++){
+        for (let i = 0; i < elements.length; i++) {
             textOfElemts.push(await elements[i].innerText());
         }
 
         return textOfElemts;
     }
+
+    protected async waitForPageLoad(maxRetries: number = 3) {
+        try {
+            await this.page.waitForSelector('html', { state: 'attached' });
+            await this.page.waitForLoadState('domcontentloaded');
+
+            for (let attempt = 0; attempt < maxRetries; attempt++) {
+                const pageLoadStatus = await this.page.evaluate(() => document.readyState);
+    
+                if (pageLoadStatus === "complete") {
+                    return;
+                }
+
+                // wait for a bit
+                await this.page.waitForTimeout(500);
+            }
+           
+            console.warn('Page did not reach "complete" status within retries')
+        } catch (error) {
+            console.log('Error waiting for page load: ', error);
+        }
+    }
+
+
+
+
 
 
 }
