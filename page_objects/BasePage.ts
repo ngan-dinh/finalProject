@@ -168,9 +168,49 @@ export default class BasePage {
         await iframeLocator.locator(locator).click();
     }
 
-    protected async fillToELementFrame(locator:string, frameLocator:string, inputValue: string){
+    protected async fillToELementIFrame(locator:string, frameLocator:string, inputValue: string){
         const ifameLocator = this.page.locator(frameLocator);
         await ifameLocator.locator(locator).fill(inputValue);
     }
+
+    protected async waitForElementVisible(locator: string, timeout?: number){
+        await this.page.locator(locator).waitFor({
+            state: 'visible',
+            timeout: timeout
+        })
+    }
+
+    protected async waitForELementHidden(locator: string, timeout?: number){
+        await this.page.locator(locator).waitFor({
+            state: 'hidden',
+            timeout: timeout
+        })
+    }
+
+    protected async waitForELementPresent(locator: string, timeout?: number){
+        await this.page.locator(locator).waitFor({
+            state: 'attached',
+            timeout: timeout
+        })
+    }
+
+    protected async waitForELementStale(locator: string, timeout?: number){
+        await this.page.locator(locator).waitFor({
+            state: 'detached',
+            timeout: timeout
+        })
+    }
+
+    protected async getTextOfAllElements(locator:string): Promise<string[]>{
+        const elements = await this.page.locator(locator).all();
+        const textOfElemts : string[] = [];
+
+        for(let i =0; i < elements.length; i++){
+            textOfElemts.push(await elements[i].innerText());
+        }
+
+        return textOfElemts;
+    }
+
 
 }
