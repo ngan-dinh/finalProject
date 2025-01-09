@@ -34,6 +34,7 @@ export default defineConfig({
     acceptDownloads: true,
     video: 'on-first-retry',
     screenshot: 'only-on-failure',
+    
   },
 
   /* Configure projects for major browsers */

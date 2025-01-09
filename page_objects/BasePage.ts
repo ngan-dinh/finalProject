@@ -234,6 +234,10 @@ export default class BasePage {
         }
     }
 
+    protected async waitForTimeout(timeout: number){
+        
+    }
+
 
 
 
