@@ -12,7 +12,7 @@ export default class DashboardPage extends BasePage {
 
     async clickToLogoutButton() {
         await this.clickToElement(DashboardPageUI.USER_PROFILE_NAME);
-        await this.selectToDropdown(DashboardPageUI.USER_PROFILE_DROPDOWN, 'Logout');
+        await this.clickToElement(DashboardPageUI.LOGOUT_LINK);
     }
 
     constructor(page: Page) {
