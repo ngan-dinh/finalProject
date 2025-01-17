@@ -5,25 +5,32 @@ import { LoginPageUI } from "../page_interface/LoginPageUI";
 
 export default class LoginPage extends BasePage {
 
-    async openPage(url: string){
+    async openPage(url: string) {
         await this.redirectURL(url);
         await this.waitForPageLoad();
     }
 
-    async clickToLoginButton(){
+    async clickToLoginButton() {
         await this.clickToElement(LoginPageUI.LOGIN_BUTTON);
     }
 
-    async getErrorMessageOfUsernameTextbox(){
-        await this.waitForElementVisible(LoginPageUI.USERNAME_TEXTBOX);
-        
+    async getErrorMessageOfUsernameTextbox() {
+        return this.getTextOfElement(LoginPageUI.USERNAME_TEXTBOX_ERROR_MESSAGE);
     }
 
-    async getErrorMessageOfPasswordTextbox(){
-
+    async getErrorMessageOfPasswordTextbox() {
+        return this.getTextOfElement(LoginPageUI.PASSWORD_TEXTBOX_ERROR_MESSAGE);
     }
 
-    constructor (page: Page){
+    async inputUserNameValue(usernameText: string) {
+        await this.fillElement(LoginPageUI.USERNAME_TEXTBOX, usernameText);
+    }
+
+    async inputPasswordValue(passwordText: string){
+        await this.fillElement(LoginPageUI.PASSWORD_TEXTBOX, passwordText);
+    }
+
+    constructor(page: Page) {
         super(page);
     }
 
