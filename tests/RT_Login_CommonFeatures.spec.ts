@@ -83,23 +83,19 @@ test('Verify login successfully', async({page})=>{
 
 test('Verify logout successfully', async({page})=>{
   
-  await test.step('Step 1: Click to login button', async() =>{
+  await test.step('Step 1: Login successfully', async() =>{
     await loginPage.inputUserNameValue(userName);
     await loginPage.inputPasswordValue(password);
     await loginPage.clickToLoginButton();
-  });
-
-  await test.step('Step 2: Verify login successfully', async() =>{
-    
     await expect.soft(page.locator(DashboardPageUI.DASHBOARD_HEADING)).toHaveText('Dashboard');
   });
 
-  await test.step('Step 3: Click to Logout button', async()=>{
+  await test.step('Step 2: Click to Logout button', async()=>{
     dashboardPage = new DashboardPage(page);
     await dashboardPage.clickToLogoutButton();
   });
 
-  await test.step('Step 4: Verify user is redirected to login page', async()=>{
+  await test.step('Step 3: Verify user is redirected to login page', async()=>{
     await expect.soft(page.locator(LoginPageUI.LOGIN_BUTTON)).toBeVisible();
   })
 
